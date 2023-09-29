@@ -1,6 +1,6 @@
 import numpy as np
 
-def FilterNeighbours(Matrix, i, j):
+def FilterNeighbours_OLD(Matrix, i, j):
     
     '''
     Given a 2d Matrix and an element i,j of this Matrix:
@@ -20,11 +20,31 @@ def FilterNeighbours(Matrix, i, j):
     Boolean = (Neighbours[:,0]> -1) & (Neighbours[:,0] < m_mat) & (Neighbours[:,1]> -1) & (Neighbours[:,1] < n_mat) 
     return(Neighbours[Boolean])
 
+
+def FilterNeighbours(Matrix,i,j):
+    '''
+    Given a 2d SQUAREDMatrix and an element i,j of this Matrix:
+    return the Matrix indices which are next neighbours of this Matrix: [i+1,j] etc.
+    But periodic boundary conditions: all elements have four next neighbours! Even at edges!
+    '''
+    assert (Matrix.shape[0] == Matrix.shape[1])
+    N_agents = Matrix.shape[0]
+    Neighbours = np.zeros((4,2))
+    Indices = np.array([i,j])
+    Neighbours[0,:] = (Indices + [1,0])%N_agents
+    Neighbours[1,:] = (Indices + [-1,0])%N_agents
+    Neighbours[2,:] = (Indices + [0,1])%N_agents
+    Neighbours[3,:] = (Indices + [0,-1])%N_agents
+
+    return(Neighbours)
+
 def NeighbourValues(Matrix, i, j):
     
     NeighboursIndices = FilterNeighbours(Matrix, i, j).astype(int)
     
     number_of_neighbours = NeighboursIndices.shape[0]
+    
+    assert (number_of_neighbours == 4)
     
     Values_of_neighbours = np.empty(number_of_neighbours)
     
